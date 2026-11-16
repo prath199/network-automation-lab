@@ -1,0 +1,75 @@
+name: arista-cer-portfolio
+topology:
+  kinds:
+    arista_ceos:
+      image: ceos:4.34.9.2M
+      binds:
+        - ./configs/interface-mapping.json:/mnt/flash/EosIntfMapping.json:ro
+  nodes:
+    MGT-01:
+      kind: arista_ceos
+      startup-config: ./configs/MGT-01.cfg
+    MGT-02:
+      kind: arista_ceos
+      startup-config: ./configs/MGT-02.cfg
+    MGT-03:
+      kind: arista_ceos
+      startup-config: ./configs/MGT-03.cfg
+    MGT-04:
+      kind: arista_ceos
+      startup-config: ./configs/MGT-04.cfg
+    MGT-05:
+      kind: arista_ceos
+      startup-config: ./configs/MGT-05.cfg
+    MGT-06:
+      kind: arista_ceos
+      startup-config: ./configs/MGT-06.cfg
+    HOST-A:
+      kind: linux
+      image: alpine:3.20
+      exec:
+        - ip address add 10.4.28.100/23 dev eth1
+        - ip link set eth1 up
+        - ip route replace default via 10.4.28.1 dev eth1
+    HOST-B:
+      kind: linux
+      image: alpine:3.20
+      exec:
+        - ip address add 10.4.22.100/23 dev eth1
+        - ip link set eth1 up
+        - ip route replace default via 10.4.22.1 dev eth1
+    LINUX-PA-01:
+      kind: linux
+      image: alpine:3.20
+      exec:
+        - sh /scripts/firewall.sh active
+      binds:
+        - ./scripts/firewall.sh:/scripts/firewall.sh:ro
+    LINUX-PA-02:
+      kind: linux
+      image: alpine:3.20
+      exec:
+        - sh /scripts/firewall.sh standby
+      binds:
+        - ./scripts/firewall.sh:/scripts/firewall.sh:ro
+  links:
+    - endpoints: ["MGT-01:eth1", "MGT-02:eth1"]
+    - endpoints: ["MGT-01:eth2", "MGT-02:eth2"]
+    - endpoints: ["MGT-03:eth1", "MGT-04:eth1"]
+    - endpoints: ["MGT-03:eth2", "MGT-04:eth2"]
+    - endpoints: ["MGT-05:eth1", "MGT-06:eth1"]
+    - endpoints: ["MGT-05:eth2", "MGT-06:eth2"]
+    - endpoints: ["MGT-05:eth3", "MGT-01:eth3"]
+    - endpoints: ["MGT-06:eth3", "MGT-01:eth4"]
+    - endpoints: ["MGT-05:eth4", "MGT-02:eth3"]
+    - endpoints: ["MGT-06:eth4", "MGT-02:eth4"]
+    - endpoints: ["MGT-05:eth5", "MGT-03:eth3"]
+    - endpoints: ["MGT-06:eth5", "MGT-03:eth4"]
+    - endpoints: ["MGT-05:eth6", "MGT-04:eth3"]
+    - endpoints: ["MGT-06:eth6", "MGT-04:eth4"]
+    - endpoints: ["MGT-01:eth5", "HOST-A:eth1"]
+    - endpoints: ["MGT-03:eth5", "HOST-B:eth1"]
+    - endpoints: ["MGT-05:eth7", "LINUX-PA-01:eth1"]
+    - endpoints: ["MGT-06:eth7", "LINUX-PA-01:eth2"]
+    - endpoints: ["MGT-05:eth8", "LINUX-PA-02:eth1"]
+    - endpoints: ["MGT-06:eth8", "LINUX-PA-02:eth2"]
