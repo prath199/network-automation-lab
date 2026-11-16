@@ -1,0 +1,15 @@
+- name: Check NTP and syslog baseline
+  hosts: eos
+  gather_facts: false
+  tasks:
+    - name: Retrieve running configuration
+      arista.eos.eos_command:
+        commands: ['show running-config']
+      register: config
+      no_log: true
+    - name: Assert NTP and remote syslog are configured
+      ansible.builtin.assert:
+        that:
+          - "'ntp server ' in config.stdout[0]"
+          - "'logging host ' in config.stdout[0]"
+        fail_msg: Missing NTP or remote syslog configuration

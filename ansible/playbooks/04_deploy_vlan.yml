@@ -1,0 +1,19 @@
+- name: Guarded VLAN deployment for isolated labs
+  hosts: eos
+  gather_facts: false
+  vars:
+    apply_changes: false
+    new_vlan_id: 428
+    new_vlan_name: AUDIO_CONTROL
+  tasks:
+    - name: Require change opt-in
+      ansible.builtin.assert:
+        that:
+          - apply_changes | bool
+        fail_msg: "Use -e apply_changes=true (and --check --diff for preview)"
+    - name: Merge VLAN
+      arista.eos.eos_vlans:
+        config:
+          - vlan_id: "{{ new_vlan_id | int }}"
+            name: "{{ new_vlan_name }}"
+        state: merged

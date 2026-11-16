@@ -1,0 +1,23 @@
+- name: Backup Arista EOS running configurations
+  hosts: eos
+  gather_facts: false
+  tasks:
+    - name: Create local backup folder
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/../outputs/backups"
+        state: directory
+        mode: '0700'
+      delegate_to: localhost
+      run_once: true
+    - name: Retrieve configuration
+      arista.eos.eos_command:
+        commands: ['show running-config']
+      register: running
+      no_log: true
+    - name: Write local backup
+      ansible.builtin.copy:
+        content: "{{ running.stdout[0] }}\n"
+        dest: "{{ playbook_dir }}/../outputs/backups/{{ inventory_hostname }}-{{ now(utc=true, fmt='%Y%m%dT%H%M%SZ') }}.cfg"
+        mode: '0600'
+      delegate_to: localhost
+      no_log: true

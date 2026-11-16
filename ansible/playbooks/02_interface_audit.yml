@@ -1,0 +1,16 @@
+- name: Arista EOS interface audit
+  hosts: eos
+  gather_facts: false
+  tasks:
+    - name: Collect interface and platform status
+      arista.eos.eos_command:
+        commands:
+          - show interfaces status
+          - show version
+      register: audit
+    - name: Display interface report
+      ansible.builtin.debug:
+        msg:
+          device: "{{ inventory_hostname }}"
+          interface_status: "{{ audit.stdout[0] }}"
+          platform: "{{ audit.stdout[1] }}"

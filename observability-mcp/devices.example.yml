@@ -1,0 +1,5 @@
+devices:
+  spine1: https://172.20.20.11:443
+  spine2: https://172.20.20.12:443
+  leaf1: https://172.20.20.21:443
+  leaf2: https://172.20.20.22:443

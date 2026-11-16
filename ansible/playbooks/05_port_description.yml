@@ -1,0 +1,19 @@
+- name: Guarded interface description deployment for labs
+  hosts: eos
+  gather_facts: false
+  vars:
+    apply_changes: false
+    target_interface: Ethernet3
+    target_description: "LAB: managed by Ansible"
+  tasks:
+    - name: Require change opt-in
+      ansible.builtin.assert:
+        that:
+          - apply_changes | bool
+        fail_msg: "Use -e apply_changes=true (and --check --diff for preview)"
+    - name: Merge description
+      arista.eos.eos_interfaces:
+        config:
+          - name: "{{ target_interface }}"
+            description: "{{ target_description }}"
+        state: merged
