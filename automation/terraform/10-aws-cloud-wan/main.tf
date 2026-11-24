@@ -19,13 +19,16 @@ resource "aws_networkmanager_core_network" "core" {
 locals {
   policy = {
     version = "2021.12"
-    core-network-configuration = { vpn-ecmp-support = true, edge-locations = [for region in var.edge_locations : { location = region }] }
+    "core-network-configuration" = {
+      "vpn-ecmp-support" = true
+      "edge-locations" = [for region in var.edge_locations : { location = region }]
+    }
     segments = [
-      { name = "infrastructure", require-attachment-acceptance = true },
-      { name = "applications", require-attachment-acceptance = true }
+      { name = "infrastructure", "require-attachment-acceptance" = true },
+      { name = "applications", "require-attachment-acceptance" = true }
     ]
-    segment-actions = []
-    attachment-policies = []
+    "segment-actions" = []
+    "attachment-policies" = []
   }
 }
 output "core_network_id" { value = aws_networkmanager_core_network.core.id }

@@ -3,6 +3,12 @@
   gather_facts: false
   serial: 5
   tasks:
+    - name: Create report directory on runner
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/../outputs"
+        state: directory
+        mode: '0700'
+      delegate_to: localhost
     - name: Capture upgrade prerequisites
       cisco.ios.ios_command:
         commands:
