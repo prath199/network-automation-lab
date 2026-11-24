@@ -1,0 +1,22 @@
+name: Six-switch MLAG offline checks
+on:
+  push:
+    paths: [ "arista-fabric/mlag-six-switch/**" ]
+  pull_request:
+    paths: [ "arista-fabric/mlag-six-switch/**" ]
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: arista-fabric/mlag-six-switch
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - run: python python/validate.py
+      - run: python python/render.py
+      - run: pytest -q tests
+      - run: python -m compileall -q python

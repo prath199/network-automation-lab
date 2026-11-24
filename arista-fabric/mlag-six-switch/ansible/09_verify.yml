@@ -1,0 +1,34 @@
+---
+- name: "09 | Read-only operational verification and evidence"
+  hosts: arista_mlag
+  gather_facts: false
+  serial: 6
+  tasks:
+    - name: Read MLAG and LACP state
+      arista.eos.eos_command:
+        commands:
+          - show mlag
+          - show mlag interfaces
+          - show port-channel summary
+          - show lacp neighbor
+          - show ip interface brief
+          - show spanning-tree
+      register: state
+    - name: Create local verification directory
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/../output/reports"
+        state: directory
+        mode: '0700'
+      delegate_to: localhost
+    - name: Save state snapshot
+      ansible.builtin.copy:
+        content: "{{ state.stdout | join('\n\n---\n\n') }}\n"
+        dest: "{{ playbook_dir }}/../output/reports/{{ inventory_hostname }}-postcheck.txt"
+        mode: '0600'
+      delegate_to: localhost
+    - name: Fail when MLAG is not Active and Connected
+      ansible.builtin.assert:
+        that:
+          - "'Active' in state.stdout[0]"
+          - "'Connected' in state.stdout[0]"
+        fail_msg: "MLAG control-plane health check failed on {{ inventory_hostname }}"

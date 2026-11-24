@@ -1,0 +1,71 @@
+# Reconstructed lab intent. Replace with reviewed documentation-only addresses for publication.
+fabric:
+  name: cer-management-mlag
+  mlag_vlan: 4094
+  mlag_peer_port_channel: 49
+  virtual_mac: "00:1c:73:00:dc:01"
+  default_next_hop: 10.4.26.253
+  allowed_vlans: [50, 422, 424, 426, 428, 430, 432]
+vlans:
+  50:  {name: EVERTZ, gateway: 192.168.8.1, prefix: 24}
+  422: {name: AUDIO_CTRL, gateway: 10.4.22.1, prefix: 23}
+  424: {name: VIDEO_CTRL, gateway: 10.4.24.1, prefix: 23}
+  426: {name: SW_CTRL, gateway: 10.4.26.1, prefix: 24}
+  428: {name: LAWO_CONTROL, gateway: 10.4.28.1, prefix: 23}
+  430: {name: MISC_CTRL, gateway: 10.4.30.1, prefix: 23}
+  432: {name: INTERCOM_MGMT, gateway: 10.4.32.1, prefix: 24}
+pairs:
+  CER_ACCESS: {nodes: [MGT-01, MGT-02], peer_ips: [10.255.255.0/31, 10.255.255.1/31]}
+  IT2_ACCESS: {nodes: [MGT-03, MGT-04], peer_ips: [10.255.255.2/31, 10.255.255.3/31]}
+  MGMT_CORE_GATEWAYS: {nodes: [MGT-05, MGT-06], peer_ips: [10.255.255.4/31, 10.255.255.5/31]}
+devices:
+  MGT-01:
+    role: access
+    pair: CER_ACCESS
+    mgmt: 192.0.2.11
+    access_mgmt_ip: 10.4.26.10/24
+    bundles:
+      - {id: 51, ports: [Ethernet51, Ethernet52], description: GATEWAY-UPLINK}
+    host_access: [{port: Ethernet53, vlan: 428}]
+  MGT-02:
+    role: access
+    pair: CER_ACCESS
+    mgmt: 192.0.2.12
+    access_mgmt_ip: 10.4.26.20/24
+    bundles:
+      - {id: 51, ports: [Ethernet51, Ethernet52], description: GATEWAY-UPLINK}
+  MGT-03:
+    role: access
+    pair: IT2_ACCESS
+    mgmt: 192.0.2.13
+    access_mgmt_ip: 10.4.26.30/24
+    bundles:
+      - {id: 52, ports: [Ethernet51, Ethernet52], description: GATEWAY-UPLINK}
+    host_access: [{port: Ethernet53, vlan: 422}]
+  MGT-04:
+    role: access
+    pair: IT2_ACCESS
+    mgmt: 192.0.2.14
+    access_mgmt_ip: 10.4.26.40/24
+    bundles:
+      - {id: 52, ports: [Ethernet51, Ethernet52], description: GATEWAY-UPLINK}
+  MGT-05:
+    role: gateway
+    pair: MGMT_CORE_GATEWAYS
+    mgmt: 192.0.2.15
+    bundles:
+      - {id: 51, ports: [Ethernet51, Ethernet52], description: CER-ACCESS}
+      - {id: 52, ports: [Ethernet53, Ethernet54], description: IT2-ACCESS}
+      - {id: 47, ports: [Ethernet47], description: FIREWALL-A, vlans: [426]}
+      - {id: 48, ports: [Ethernet48], description: FIREWALL-B, vlans: [426]}
+    svi_ips: {50: 192.168.8.3/24, 422: 10.4.22.2/23, 424: 10.4.24.2/23, 426: 10.4.26.50/24, 428: 10.4.28.2/23, 430: 10.4.30.2/23, 432: 10.4.32.2/24}
+  MGT-06:
+    role: gateway
+    pair: MGMT_CORE_GATEWAYS
+    mgmt: 192.0.2.16
+    bundles:
+      - {id: 51, ports: [Ethernet51, Ethernet52], description: CER-ACCESS}
+      - {id: 52, ports: [Ethernet53, Ethernet54], description: IT2-ACCESS}
+      - {id: 47, ports: [Ethernet47], description: FIREWALL-A, vlans: [426]}
+      - {id: 48, ports: [Ethernet48], description: FIREWALL-B, vlans: [426]}
+    svi_ips: {50: 192.168.8.4/24, 422: 10.4.22.3/23, 424: 10.4.24.3/23, 426: 10.4.26.60/24, 428: 10.4.28.3/23, 430: 10.4.30.3/23, 432: 10.4.32.3/24}

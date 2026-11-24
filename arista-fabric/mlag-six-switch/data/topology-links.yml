@@ -1,0 +1,16 @@
+# A link endpoint is Linux-side ethN in Containerlab, not physical front-panel cabling.
+links:
+  - [MGT-01:eth1, MGT-02:eth1]
+  - [MGT-01:eth2, MGT-02:eth2]
+  - [MGT-03:eth1, MGT-04:eth1]
+  - [MGT-03:eth2, MGT-04:eth2]
+  - [MGT-05:eth1, MGT-06:eth1]
+  - [MGT-05:eth2, MGT-06:eth2]
+  - [MGT-05:eth3, MGT-01:eth3]
+  - [MGT-06:eth3, MGT-01:eth4]
+  - [MGT-05:eth4, MGT-02:eth3]
+  - [MGT-06:eth4, MGT-02:eth4]
+  - [MGT-05:eth5, MGT-03:eth3]
+  - [MGT-06:eth5, MGT-03:eth4]
+  - [MGT-05:eth6, MGT-04:eth3]
+  - [MGT-06:eth6, MGT-04:eth4]

@@ -1,19 +1,10 @@
-# Arista EOS spine-leaf EVPN/VXLAN starter
+# Arista fabric automation
 
-I model a small 2-spine/2-leaf CLOS fabric with routed /31 links, iBGP/eBGP design decisions, VTEP loopbacks and VXLAN encapsulation. This track is independent of the Cisco Nexus EVPN project under `evpn-deployment/`.
+I maintain two complementary Arista network labs:
 
-## Run
-Load a licensed cEOSLab image and deploy `containerlab/topology.clab.yml`. Match the container Ethernet interface numbering to the EOS interface mapping before applying generated configs.
+1. **[Six-switch MLAG automation](mlag-six-switch/README.md)** — three independent MLAG pairs, ten Python/Ansible operational workflows, YAML fabric source-of-truth, config rendering, read-only verification, CI and a diagram.
+2. **[Arista spine-leaf EVPN-VXLAN](configs/)** — two-spine/two-leaf configuration templates with [verification steps](verify.md).
 
-## Verification
-```
-show interfaces status
-show ip bgp summary
-show ip route
-show bgp evpn summary
-show bgp evpn route-type mac-ip
-show vxlan vni
-show vxlan address-table
-```
-The configs are deliberately preliminary reference examples, not tested reference designs. Verify all underlay routes and EVPN route reflection/next-hop behavior before testing host reachability.
+The six-switch design does not use a single six-way MLAG domain: MGT-01/02, MGT-03/04, and MGT-05/06 form three **separate** MLAG domains and cross-pair links use dedicated LACP bundles.
 
+All examples require isolated lab validation and an approved rollback plan before any live network change.

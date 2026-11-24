@@ -1,0 +1,24 @@
+flowchart TB
+    subgraph G["Gateway pair | MGMT_CORE_GATEWAYS"]
+      M5["MGT-05"] ---|"Et49 + Et50 / Po49"| M6["MGT-06"]
+    end
+    subgraph A["CER_ACCESS"]
+      M1["MGT-01"] ---|"Et49 + Et50 / Po49"| M2["MGT-02"]
+    end
+    subgraph B["IT2_ACCESS"]
+      M3["MGT-03"] ---|"Et49 + Et50 / Po49"| M4["MGT-04"]
+    end
+    M5 ==>|"Po51 / LACP"| M1
+    M5 ==>|"Po51 / LACP"| M2
+    M6 ==>|"Po51 / LACP"| M1
+    M6 ==>|"Po51 / LACP"| M2
+    M5 ==>|"Po52 / LACP"| M3
+    M5 ==>|"Po52 / LACP"| M4
+    M6 ==>|"Po52 / LACP"| M3
+    M6 ==>|"Po52 / LACP"| M4
+    M5 --- F1["Firewall simulation A"]
+    M6 --- F1
+    M5 --- F2["Firewall simulation B"]
+    M6 --- F2
+    M1 --- H1["HOST-A | VLAN 428"]
+    M3 --- H2["HOST-B | VLAN 422"]

@@ -1,0 +1,27 @@
+---
+- name: "04 | Read-only MLAG readiness"
+  hosts: arista_mlag
+  gather_facts: false
+  serial: 6
+  tasks:
+    - name: Ensure SSH and EOS CLI work
+      arista.eos.eos_command:
+        commands:
+          - show version
+          - show interfaces status
+          - show port-channel summary
+          - show ip interface brief
+          - show spanning-tree
+      register: preflight
+    - name: Persist prechange evidence
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/../output/reports"
+        state: directory
+        mode: '0700'
+      delegate_to: localhost
+    - name: Write per-device checks
+      ansible.builtin.copy:
+        content: "{{ preflight.stdout | join('\n\n---\n\n') }}\n"
+        dest: "{{ playbook_dir }}/../output/reports/{{ inventory_hostname }}-preflight.txt"
+        mode: '0600'
+      delegate_to: localhost

@@ -1,0 +1,24 @@
+---
+- name: "03 | Secure read-only backups before MLAG deployment"
+  hosts: arista_mlag
+  gather_facts: false
+  serial: 6
+  tasks:
+    - name: Create local evidence directory
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/../output/backups"
+        state: directory
+        mode: "0700"
+      delegate_to: localhost
+    - name: Collect running configuration
+      arista.eos.eos_command:
+        commands: ["show running-config"]
+      register: running
+      no_log: true
+    - name: Store restricted local config snapshot
+      ansible.builtin.copy:
+        content: "{{ running.stdout[0] }}\n"
+        dest: "{{ playbook_dir }}/../output/backups/{{ inventory_hostname }}.cfg"
+        mode: "0600"
+      delegate_to: localhost
+      no_log: true

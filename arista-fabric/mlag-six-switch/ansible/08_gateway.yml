@@ -1,0 +1,29 @@
+---
+- name: "08 | configure gateway VARP SVIs and access management"
+  hosts: arista_mlag
+  gather_facts: false
+  serial: 2
+  any_errors_fatal: true
+  vars:
+    approved: false
+    expected_change_id: ""
+  pre_tasks:
+    - name: Require explicit approval and change ticket
+      ansible.builtin.assert:
+        that:
+          - approved | bool
+          - expected_change_id | length >= 4
+        fail_msg: "Blocked. Supply -e approved=true -e expected_change_id=LAB-123 after review."
+    - name: Ensure rendered file exists on control node
+      ansible.builtin.stat:
+        path: "{{ playbook_dir }}/../output/gateway/{{ inventory_hostname }}.cfg"
+      register: generated
+      delegate_to: localhost
+    - name: Refuse missing rendered config
+      ansible.builtin.assert:
+        that: generated.stat.exists
+  tasks:
+    - name: Apply reviewed gateway phase (do not auto-save)
+      arista.eos.eos_config:
+        src: "{{ playbook_dir }}/../output/gateway/{{ inventory_hostname }}.cfg"
+        save_when: never
