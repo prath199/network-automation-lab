@@ -1,0 +1,16 @@
+**/__pycache__/
+**/.pytest_cache/
+**/.venv/
+**/.terraform/
+**/*.tfstate*
+**/*.tfvars
+!**/*.tfvars.example
+**/outputs/
+**/reports/
+**/.env
+**/.env.*
+!**/.env.example
+**/clab-*/
+*.key
+*.pem
+

@@ -1,0 +1,18 @@
+all:
+  children:
+    iosxe:
+      hosts:
+        iosxe-edge-01: {ansible_host: 192.0.2.11}
+      vars:
+        ansible_connection: ansible.netcommon.network_cli
+        ansible_network_os: cisco.ios.ios
+    eos:
+      hosts:
+        eos-leaf-01: {ansible_host: 192.0.2.21}
+      vars:
+        ansible_connection: ansible.netcommon.network_cli
+        ansible_network_os: arista.eos.eos
+  vars:
+    ansible_user: "{{ lookup('env', 'NETOPS_USERNAME') }}"
+    ansible_password: "{{ lookup('env', 'NETOPS_PASSWORD') }}"
+

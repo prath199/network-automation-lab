@@ -1,0 +1,47 @@
+- name: IOS-XE running configuration snapshots
+  hosts: iosxe
+  gather_facts: false
+  serial: 20
+  tasks:
+    - name: Read IOS-XE running config
+      cisco.ios.ios_command:
+        commands: ["show running-config"]
+      register: snapshot
+      no_log: true
+    - name: Create local backup folder
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/../outputs/backups"
+        state: directory
+        mode: '0700'
+      delegate_to: localhost
+    - name: Save snapshot on automation runner
+      ansible.builtin.copy:
+        content: "{{ snapshot.stdout[0] }}\n"
+        dest: "{{ playbook_dir }}/../outputs/backups/{{ inventory_hostname }}.cfg"
+        mode: '0600'
+      delegate_to: localhost
+      no_log: true
+- name: EOS running configuration snapshots
+  hosts: eos
+  gather_facts: false
+  serial: 20
+  tasks:
+    - name: Read EOS running config
+      arista.eos.eos_command:
+        commands: ["show running-config"]
+      register: snapshot
+      no_log: true
+    - name: Create local backup folder
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/../outputs/backups"
+        state: directory
+        mode: '0700'
+      delegate_to: localhost
+    - name: Save snapshot on automation runner
+      ansible.builtin.copy:
+        content: "{{ snapshot.stdout[0] }}\n"
+        dest: "{{ playbook_dir }}/../outputs/backups/{{ inventory_hostname }}.cfg"
+        mode: '0600'
+      delegate_to: localhost
+      no_log: true
+

@@ -1,0 +1,7 @@
+devices:
+  - name: pan-fw-01
+    host: 192.0.2.101
+    api_key_env: PANOS_API_KEY_FW01
+  - name: pan-fw-02
+    host: 192.0.2.102
+    api_key_env: PANOS_API_KEY_FW02

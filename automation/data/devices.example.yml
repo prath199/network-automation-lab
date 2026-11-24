@@ -1,0 +1,11 @@
+devices:
+  - name: iosxe-edge-01
+    platform: cisco_ios
+    host: 192.0.2.11
+    site: lab-a
+    credential_env: NETOPS_IOS_PASSWORD
+  - name: eos-leaf-01
+    platform: arista_eos
+    host: 192.0.2.21
+    site: lab-a
+    credential_env: NETOPS_EOS_PASSWORD

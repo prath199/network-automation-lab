@@ -1,0 +1,21 @@
+- name: Read-only IOS-XE upgrade preflight
+  hosts: iosxe
+  gather_facts: false
+  serial: 5
+  tasks:
+    - name: Capture upgrade prerequisites
+      cisco.ios.ios_command:
+        commands:
+          - show version
+          - show boot
+          - dir flash:
+          - show switch
+          - show redundancy
+      register: preflight
+    - name: Write local report
+      ansible.builtin.copy:
+        content: "{{ preflight.stdout | join('\n\n') }}\n"
+        dest: "{{ playbook_dir }}/../outputs/{{ inventory_hostname }}-upgrade-preflight.txt"
+        mode: '0600'
+      delegate_to: localhost
+

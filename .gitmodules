@@ -1,0 +1,3 @@
+[submodule "evpn-deployment/cisco-nexus-vxlan-evpn"]
+    path = evpn-deployment/cisco-nexus-vxlan-evpn
+    url = https://github.com/prath199/vxlan-evpn-iac.git

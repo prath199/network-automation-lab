@@ -1,0 +1,22 @@
+- name: Guarded VLAN rollout to Arista EOS
+  hosts: eos
+  gather_facts: false
+  serial: 2
+  any_errors_fatal: true
+  vars:
+    approved: false
+  pre_tasks:
+    - name: Require change approval and validate input
+      ansible.builtin.assert:
+        that:
+          - approved | bool
+          - desired_vlans is defined
+          - desired_vlans | length > 0
+          - (desired_vlans | map(attribute='vlan_id') | map('int') | min) >= 1
+          - (desired_vlans | map(attribute='vlan_id') | map('int') | max) <= 4094
+  tasks:
+    - name: Merge target VLANs only
+      arista.eos.eos_vlans:
+        config: "{{ desired_vlans }}"
+        state: merged
+

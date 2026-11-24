@@ -1,0 +1,14 @@
+outputs/
+reports/
+__pycache__/
+.pytest_cache/
+.venv/
+*.log
+*.cfg
+*.xml
+*.tfstate*
+.terraform/
+*.tfvars
+!*.tfvars.example
+.env
+

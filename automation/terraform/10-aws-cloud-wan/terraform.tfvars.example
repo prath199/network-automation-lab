@@ -1,0 +1,2 @@
+aws_region = "us-east-1"
+edge_locations = ["us-east-1", "us-west-2"]
